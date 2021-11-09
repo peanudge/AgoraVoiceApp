@@ -3,7 +3,7 @@
   "scripts": {
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "native:ios":"npx react-native run-ios",
+    "native:ios": "npx react-native run-ios",
     "web": "expo start --web",
     "start": "react-native start"
   },
