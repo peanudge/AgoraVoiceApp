@@ -51,5 +51,7 @@
 	<false/>
   <key>UIStatusBarStyle</key>
   <string>UIStatusBarStyleDefault</string>
+  <key>NSMicrophoneUsageDescription</key>
+  <string>Microphone</string>
 </dict>
 </plist>
