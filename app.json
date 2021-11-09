@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "agora",
+    "slug": "agora",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "agora"
+}
