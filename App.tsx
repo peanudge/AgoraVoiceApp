@@ -1,5 +1,5 @@
 import React, { Component, useState, useEffect, useRef } from 'react'
-import { Platform, Button, TextInput, View, PermissionsAndroid } from 'react-native'
+import { Platform, Button, TextInput, View, Text } from 'react-native'
 // Import the RtcEngine class into your project.
 import RtcEngine from 'react-native-agora'
 // Import the UI styles.
@@ -7,14 +7,14 @@ import styles from './components/Style'
 
 const APP_ID = "faafbd0218c94adab88d4bd0d988e179";
 const CHANNEL = "TEST";
-const TOKEN = "006faafbd0218c94adab88d4bd0d988e179IAD6MpyxZ5lo03SbUdHpCDjosLelpJIez6e2z6mX1g1+dbiT6u4AAAAAEADJaQ2G8XCLYQEAAQDxcIth";
+const TOKEN = "006faafbd0218c94adab88d4bd0d988e179IAAiAkTIp0+PI4voB9bDnq3cs99O17ZhRmmFf/iPXeTJgriT6u4AAAAAEABr21wC6Q+OYQEAAQDpD45h";
+
 
 // Define a State interface.
 interface AgoraInfo {
   appId: string,
   token: string,
   channelName: string,
-  joinSucceed: boolean,
   openMicrophone: boolean,
   enableSpeakerphone: boolean,
   peerIds: number[],
@@ -27,9 +27,10 @@ export default function App() {
     channelName: CHANNEL,
     openMicrophone: true,
     enableSpeakerphone: true,
-    joinSucceed: false,
     peerIds: [],
   });
+
+  const [isJoinSucceed, setIsJoinSucced] = useState<boolean>(false);
 
   const rtcEngine = useRef<RtcEngine | null>(null);
 
@@ -52,7 +53,7 @@ export default function App() {
     // Listen for the UserOffline callback.
     // This callback occurs when the remote user leaves the channel or drops offline.
     engine.addListener('UserOffline', (uid, reason) => {
-      console.log('UserOffline', uid, reason)
+      console.log('UserOffline/', "uid: ", uid, ",reason:", reason);
       const { peerIds } = agoraInfo;
       setAgoraInfo({
         ...agoraInfo,
@@ -64,10 +65,7 @@ export default function App() {
     // This callback occurs when the local user successfully joins the channel.
     engine.addListener('JoinChannelSuccess', (channel, uid, elapsed) => {
       console.log('JoinChannelSuccess', channel, uid, elapsed)
-      setAgoraInfo({
-        ...agoraInfo,
-        joinSucceed: true
-      })
+      setIsJoinSucced(true);
     })
   }
 
@@ -75,6 +73,7 @@ export default function App() {
   // Set the ID of the local user, which is an integer and should be unique. If you set uid as 0,
   // the SDK assigns a user ID for the local user and returns it in the JoinChannelSuccess callback.
   const joinChannel = async () => {
+    console.log("Join Channel");
     await rtcEngine.current?.joinChannel(
       agoraInfo.token,
       agoraInfo.channelName,
@@ -83,8 +82,10 @@ export default function App() {
   }
 
   const leaveChannel = async () => {
+    console.log("Leave Channel");
     await rtcEngine.current?.leaveChannel()
-    setAgoraInfo({ ...agoraInfo, peerIds: [], joinSucceed: false })
+    setAgoraInfo({ ...agoraInfo, peerIds: [] })
+    setIsJoinSucced(false);
   }
 
   // Turn the microphone on or off.
@@ -109,12 +110,12 @@ export default function App() {
 
 
   useEffect(() => {
-    init();
+    init().catch(err => console.log(err));
   }, [])
 
   const {
+    appId,
     channelName,
-    joinSucceed,
     openMicrophone,
     enableSpeakerphone,
   } = agoraInfo;
@@ -122,6 +123,11 @@ export default function App() {
   return (
     <View style={styles.container}>
       <View style={styles.top}>
+        <Text>AppId: {appId}</Text>
+        <Text>ChannelName: {channelName}</Text>
+        <Text>OpenMicrophone: {openMicrophone ? "On" : "Off"} </Text>
+        <Text>EnableSpeakerphone: {enableSpeakerphone ? "On" : "Off"}</Text>
+        <Text></Text>
         <TextInput
           style={styles.input}
           onChangeText={(text) => setAgoraInfo({ ...agoraInfo, channelName: text })}
@@ -129,8 +135,8 @@ export default function App() {
           value={channelName}
         />
         <Button
-          onPress={joinSucceed ? leaveChannel : joinChannel}
-          title={`${joinSucceed ? 'Leave' : 'Join'} channel`}
+          onPress={() => isJoinSucceed ? leaveChannel() : joinChannel()}
+          title={`${isJoinSucceed ? 'Leave' : 'Join'} channel`}
         />
       </View>
       <View style={styles.float}>

@@ -28,4 +28,13 @@ Expo와 리액트 네이티브 CLI(네이티브 파일들에 접근하기위해)
 
 - Expo App으로 실행시 앱 빌드 실패할 것입니다. (npm start는 expo 명령임을 참고해주세요.)
 
-React Native CLI로 실행하거나 XCode로 직접 빌드해서 실행가능합니다.
+React Native CLI로 실행하거나 XCode로 직접 빌드해서 실행가능합니다. 
+
+
+# Tip
+
+https://reactnative.dev/docs/environment-setup
+
+위 환경 구성이 잘되었는지 확인해주세요.
+
+디버깅 환경은 네트워크가 연결되어있어야한다.
